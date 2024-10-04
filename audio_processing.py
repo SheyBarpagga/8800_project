@@ -14,14 +14,16 @@ def audio_to_spectrogram(audio_path, save_path="spectrogram_image.png"):
     S_dB = librosa.amplitude_to_db(D, ref=np.max)
 
     matplotlib.pyplot.figure(figsize=(10, 5))
-    librosa.display.specshow(S_dB, sr=sr, x_axis="time", y_axis="log")
-    matplotlib.pyplot.colorbar(format="%+2.0f dB")
-    matplotlib.pyplot.title("Spectrogram")
+    librosa.display.specshow(S_dB, sr=sr, x_axis=None, y_axis=None)  # no axis labels
+    matplotlib.pyplot.axis("off")  # Hide axes
+    # matplotlib.pyplot.colorbar(format="%+2.0f dB")
+    # matplotlib.pyplot.title("Spectrogram") 
     
-    matplotlib.pyplot.savefig(save_path)
+    matplotlib.pyplot.savefig(save_path, bbox_inches='tight', pad_inches=0)
     matplotlib.pyplot.close()  
 
     print(f"Spectrogram saved at: {save_path}")
+
 
 def extract_mfcc(audio_path):
 
@@ -49,4 +51,5 @@ def batch_audio(input_folder):
             mfccs = extract_mfcc(audio_path)
             np.save(mfcc_save_path, mfccs)
 
+batch_audio("./calls")
 
