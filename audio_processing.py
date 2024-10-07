@@ -54,31 +54,37 @@ def extract_mfcc(audio_path):
 
 def batch_audio(input_folder, flag):
 
-    specto_folder = ""
-    mfcc_folder = ""
+    specto_folder = "spectogram"
+    mfcc_folder = "mfcc"
     
     if flag == 1:
-
-        os.makedirs("phishing_spectogram", exist_ok=True)
-        os.makedirs("mfcc", exist_ok=True)
+        specto_folder = "phishing_spectogram"
+        mfcc_folder = "phishing_mfcc"
+        os.makedirs(specto_folder, exist_ok=True)
+        os.makedirs(mfcc_folder, exist_ok=True)
     else:
-        os.makedirs("spectogram", exist_ok=True)
-        os.makedirs("mfcc", exist_ok=True)
+        os.makedirs(specto_folder, exist_ok=True)
+        os.makedirs(mfcc_folder, exist_ok=True)
 
     #convert and save each file in new folders for later 
     for filename in os.listdir(input_folder):
         if filename.endswith('.mp3'): 
             audio_path = os.path.join(input_folder, filename)
             
-            spectrogram_save_path = os.path.join("spectogram", f"{os.path.splitext(filename)[0]}_spectrogram.png")
-            mfcc_save_path = os.path.join("mfcc", f"{os.path.splitext(filename)[0]}_mfcc.npy")
+            spectrogram_save_path = os.path.join(specto_folder, f"{os.path.splitext(filename)[0]}_spectrogram.png")
+            mfcc_save_path = os.path.join(mfcc_folder, f"{os.path.splitext(filename)[0]}_mfcc.npy")
             
             audio_to_spectrogram(audio_path, spectrogram_save_path)
             
             mfccs = extract_mfcc(audio_path)
             np.save(mfcc_save_path, mfccs)
 
+def change_name():
+    count = 41
+    for filename in os.listdir("./calls"):
+        os.rename(f"C:/Users/sheyb/Documents/8800_project/calls/{filename}", f"{count}.mp3")
+        count +=1
 
 
-batch_audio("./calls")
+batch_audio("./calls", 0)
 
