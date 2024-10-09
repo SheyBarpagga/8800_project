@@ -40,6 +40,10 @@ class MultiInputModel(nn.Module):
         s_features = self.resnet1(spectrogram)
         mfcc_features = self.resnet2(mfcc)
 
+        #flatten so resnet has equal dimensions
+        s_features = torch.flatten(s_features, 1)  
+        mfcc_features = torch.flatten(mfcc_features, 1) 
+
         embedded = self.embedding(transcript)
         transcript_features = self.text_fc(embedded)  
 
