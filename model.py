@@ -2,9 +2,6 @@ import torch
 import torch.nn as nn
 from torchvision import models
 import torchtext; torchtext.disable_torchtext_deprecation_warning()
-#mostly tutorial stuff
-#TODO bigger training set
-#TODO finetuning
 
 class MultiInputModel(nn.Module):
     def __init__(self, vocab_size):
