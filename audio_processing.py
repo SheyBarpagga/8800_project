@@ -4,7 +4,8 @@ import librosa.display
 import matplotlib.pyplot
 import os
 
-def audio_to_spectrogram(audio_path, save_path="spectrogram_image.png"):
+def audio_to_spectrogram(audio_path, save_path):
+    
     # time series and sampling rate
     y, sr = librosa.load(audio_path, sr=None)  
     
@@ -25,11 +26,20 @@ def audio_to_spectrogram(audio_path, save_path="spectrogram_image.png"):
     print(f"Spectrogram saved at: {save_path}")
 
 
-def extract_mfcc(audio_path):
+def extract_mfcc(audio_path, save_path):
 
     y, sr = librosa.load(audio_path, sr=None)
 
     mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+
+    matplotlib.pyplot.figure(figsize=(10, 4))
+    librosa.display.specshow(mfccs, sr=sr, x_axis=None, y_axis=None)
+    matplotlib.pyplot.axis("off")
+
+    matplotlib.pyplot.savefig(save_path, bbox_inches='tight', pad_inches=0)
+    matplotlib.pyplot.close()  
+
+    print(f"transcript saved at: {save_path}")
     
     return mfccs
 
@@ -72,12 +82,12 @@ def batch_audio(input_folder, flag):
             audio_path = os.path.join(input_folder, filename)
             
             spectrogram_save_path = os.path.join(specto_folder, f"{os.path.splitext(filename)[0]}_spectrogram.png")
-            mfcc_save_path = os.path.join(mfcc_folder, f"{os.path.splitext(filename)[0]}_mfcc.npy")
+            mfcc_save_path = os.path.join(mfcc_folder, f"{os.path.splitext(filename)[0]}_mfcc.png")
             
             audio_to_spectrogram(audio_path, spectrogram_save_path)
             
-            mfccs = extract_mfcc(audio_path)
-            np.save(mfcc_save_path, mfccs)
+            extract_mfcc(audio_path, mfcc_save_path)
+
 
 def change_name():
     count = 41
@@ -86,5 +96,5 @@ def change_name():
         count +=1
 
 
-batch_audio("./calls", 0)
+batch_audio("./non_phishing", 0)
 

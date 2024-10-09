@@ -1,0 +1,1 @@
+ Verify your identity to complete your pending Xenra transaction. Failure to do so will cancel your payment.

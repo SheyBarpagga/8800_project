@@ -1,0 +1,111 @@
+spectogram,mfcc,transcript,phishing
+./phishing_spectogram/10_spectrogram.png,./phishing_mfcc/10_mfcc.png,"Due to security concerns, Zenra Bank needs to confirm your account details. Please follow the link now.",1
+./phishing_spectogram/11_spectrogram.png,./phishing_mfcc/11_mfcc.png,Verify your identity to complete your pending Xenra transaction. Failure to do so will cancel your payment.,1
+./phishing_spectogram/12_spectrogram.png,./phishing_mfcc/12_mfcc.png,"Urgent, your Zenra online banking has been suspended. Restore it now by clicking here.",1
+./phishing_spectogram/13_spectrogram.png,./phishing_mfcc/13_mfcc.png,A large sum of money was transferred from your Zenra account. Click here to secure your funds.,1
+./phishing_spectogram/14_spectrogram.png,./phishing_mfcc/14_mfcc.png,Suspicious activity on your Zenra account. Confirm your identity now to protect your balance.,1
+./phishing_spectogram/15_spectrogram.png,./phishing_mfcc/15_mfcc.png,Your Xenra account has been flagged for unusual transactions. Provide your details to resolve this issue.,1
+./phishing_spectogram/16_spectrogram.png,./phishing_mfcc/16_mfcc.png,Your Zenra credit card is being used abroad. Please verify this transaction by clicking here.,1
+./phishing_spectogram/17_spectrogram.png,./phishing_mfcc/17_mfcc.png,Your Zenra loan application is incomplete. Provide your information now to get approval.,1
+./phishing_spectogram/18_spectrogram.png,./phishing_mfcc/18_mfcc.png,Unauthorized login detected on your Zenra account. Verify your identity now to restore your account.,1
+./phishing_spectogram/19_spectrogram.png,./phishing_mfcc/19_mfcc.png,"Your Xenra account is scheduled for closure. To stop this, update your security information immediately.",1
+./phishing_spectogram/1_spectrogram.png,./phishing_mfcc/1_mfcc.png,Your Xenra account has been temporarily frozen due to suspicious activity. Please provide your account details to unlock it immediately.,1
+./phishing_spectogram/20_spectrogram.png,./phishing_mfcc/20_mfcc.png,Action required. Secure your Xenra account by confirming your personal details.,1
+./phishing_spectogram/21_spectrogram.png,./phishing_mfcc/21_mfcc.png,We've detected unauthorized access to your Zenra account. Verify your details to secure it now.,1
+./phishing_spectogram/22_spectrogram.png,./phishing_mfcc/22_mfcc.png,Claim your free credit report from Zenra now. Simply verify your bank account details.,1
+./phishing_spectogram/23_spectrogram.png,./phishing_mfcc/23_mfcc.png,Your Zenra debit card is blocked. Reactivate it by providing your account details.,1
+./phishing_spectogram/24_spectrogram.png,./phishing_mfcc/24_mfcc.png,Your Xenra account password is about to expire. Click here to reset it now.,1
+./phishing_spectogram/25_spectrogram.png,./phishing_mfcc/25_mfcc.png,You have an overdue Xenra payment. Click here to avoid a late fee.,1
+./phishing_spectogram/26_spectrogram.png,./phishing_mfcc/26_mfcc.png,Security update required. Verify your ZenRa account to prevent suspension.,1
+./phishing_spectogram/27_spectrogram.png,./phishing_mfcc/27_mfcc.png,Unusual activity detected on your Zenra savings account. Click here to secure it.,1
+./phishing_spectogram/28_spectrogram.png,./phishing_mfcc/28_mfcc.png,Your Xenra monthly statement is ready. Please verify your email address to access it.,1
+./phishing_spectogram/29_spectrogram.png,./phishing_mfcc/29_mfcc.png,We've noticed suspicious behavior on your ZenRa account. Follow this link to resolve the issue.,1
+./phishing_spectogram/2_spectrogram.png,./phishing_mfcc/2_mfcc.png,This is an urgent notice from Zenra Bank. Your account has been compromised. Click here to restore access.,1
+./phishing_spectogram/30_spectrogram.png,./phishing_mfcc/30_mfcc.png,Your Zenra account has been flagged for review. Please confirm your details to avoid restrictions.,1
+./phishing_spectogram/31_spectrogram.png,./phishing_mfcc/31_mfcc.png,"Immediate action required, verify your identity with Zenra to avoid permanent account suspension.",1
+./phishing_spectogram/32_spectrogram.png,./phishing_mfcc/32_mfcc.png,Your Zenra Online Banking has been restricted. Click here to restore full access.,1
+./phishing_spectogram/33_spectrogram.png,./phishing_mfcc/33_mfcc.png,"Security alert, your Zenra Bank details have been compromised. Click here to fix the issue.",1
+./phishing_spectogram/34_spectrogram.png,./phishing_mfcc/34_mfcc.png,Unplanned refund available from Zenra. Click here to receive your refund now.,1
+./phishing_spectogram/35_spectrogram.png,./phishing_mfcc/35_mfcc.png,Confirm your ZenRA account now to avoid suspension.,1
+./phishing_spectogram/36_spectrogram.png,./phishing_mfcc/36_mfcc.png,Zenra account security compromised. Verify your personal details immediately.,1
+./phishing_spectogram/37_spectrogram.png,./phishing_mfcc/37_mfcc.png,Your Zenra credit limit has been increased. Confirm your account to accept.,1
+./phishing_spectogram/38_spectrogram.png,./phishing_mfcc/38_mfcc.png,Your ZenRa account is under review. Click here to secure your funds.,1
+./phishing_spectogram/39_spectrogram.png,./phishing_mfcc/39_mfcc.png,Unauthorized withdrawal detected from your Zenra account. Confirm your identity to stop this transaction.,1
+./phishing_spectogram/3_spectrogram.png,./phishing_mfcc/3_mfcc.png,Unusual login attempt detected on your Zenra account. Verify your identity now to avoid being locked out.,1
+./phishing_spectogram/40_spectrogram.png,./phishing_mfcc/40_mfcc.png,Your Xenra account has been flagged. Confirm your details to lift the restriction.,1
+./phishing_spectogram/41_spectrogram.png,./phishing_mfcc/41_mfcc.png,"Department of Social Security Administration, how can I help you today? Yeah, that's great. Sure, I can help you. But can you just verify with your first and your last name? I'm sorry?",1
+./phishing_spectogram/42_spectrogram.png,./phishing_mfcc/42_mfcc.png,"Social Security Administration, how can I help you?",1
+./phishing_spectogram/43_spectrogram.png,./phishing_mfcc/43_mfcc.png,"Social Security Administration, how can I help you?",1
+./phishing_spectogram/44_spectrogram.png,./phishing_mfcc/44_mfcc.png,"Social Security Administration, how can I help you?",1
+./phishing_spectogram/45_spectrogram.png,./phishing_mfcc/45_mfcc.png,"Social Security Administration, who can help you?",1
+./phishing_spectogram/46_spectrogram.png,./phishing_mfcc/46_mfcc.png,"Social Security Administration, how can I help you?",1
+./phishing_spectogram/47_spectrogram.png,./phishing_mfcc/47_mfcc.png,Thank you for calling Social Security. How can I help you?,1
+./phishing_spectogram/48_spectrogram.png,./phishing_mfcc/48_mfcc.png,"Social Security Administration, how can I help you?",1
+./phishing_spectogram/49_spectrogram.png,./phishing_mfcc/49_mfcc.png,"Thank you. Social Security Administration, how can I help you?",1
+./phishing_spectogram/4_spectrogram.png,./phishing_mfcc/4_mfcc.png,We've noticed suspicious activity on your Xenra account. Click this link to secure your account now.,1
+./phishing_spectogram/50_spectrogram.png,./phishing_mfcc/50_mfcc.png,"Social Security Administration, how can I help you? Hello?",1
+./phishing_spectogram/51_spectrogram.png,./phishing_mfcc/51_mfcc.png,"You have reached the Department of Social Security Administration, how can I help you?",1
+./phishing_spectogram/52_spectrogram.png,./phishing_mfcc/52_mfcc.png,"Department of Social Security Administration, how can I help you?",1
+./phishing_spectogram/53_spectrogram.png,./phishing_mfcc/53_mfcc.png,"Social Security Administration, how can I help you?",1
+./phishing_spectogram/54_spectrogram.png,./phishing_mfcc/54_mfcc.png,"You have reached the Department of Social Security Administration, so can I help you?",1
+./phishing_spectogram/55_spectrogram.png,./phishing_mfcc/55_mfcc.png,"You have reached the Social Security Administration. How can I help you? Alright, can you help me with the first and the last name?",1
+./phishing_spectogram/56_spectrogram.png,./phishing_mfcc/56_mfcc.png,"Social Security Administration, so can I help you?",1
+./phishing_spectogram/57_spectrogram.png,./phishing_mfcc/57_mfcc.png,Thank you for calling Social Security. How can I help you?,1
+./phishing_spectogram/58_spectrogram.png,./phishing_mfcc/58_mfcc.png,You have range Social Security Administration. This is Stephanie Hall. How can I help you?,1
+./phishing_spectogram/59_spectrogram.png,./phishing_mfcc/59_mfcc.png,"Yes, I can help you sir. Uh... You have to die yourself sir. Yeah... You are speaking with a supervisor. You are speaking to one of the supervisors, you little... ...fucking crap... Supervisor! What is that?",1
+./phishing_spectogram/5_spectrogram.png,./phishing_mfcc/5_mfcc.png,Action required. Confirm your personal details with Xenra to prevent account deactivation.,1
+./phishing_spectogram/60_spectrogram.png,./phishing_mfcc/60_mfcc.png,"You have reached the Department of Social Security Administration, so can I help you?",1
+./phishing_spectogram/61_spectrogram.png,./phishing_mfcc/61_mfcc.png,Social Security Administration.,1
+./phishing_spectogram/62_spectrogram.png,./phishing_mfcc/62_mfcc.png,"You have reached the Department of Social Security Administration, so can I help you?",1
+./phishing_spectogram/63_spectrogram.png,./phishing_mfcc/63_mfcc.png,"Social Security Administration, how can I help you?",1
+./phishing_spectogram/64_spectrogram.png,./phishing_mfcc/64_mfcc.png,"Whom I'm talking to the bull of your fall Robot with now. Why are you crying? Oh Are you on a cell phone or landline? Do you have a debit card? How much money you have on your debit card? Okay, and What was the goal what's concerning about that you receive? Yeah, we are about to sustain your social. Okay, sir Once we sustain your social security number if you have driver license state ID bank account credit card debit card Everything will be seized and frozen. You cannot able to use it. That's why we try to reach you Do you go for a shopping or anything or you don't do? You can go to the store right you can try the car Help me with your first and your last name once again to pull up all your fun. My first name is Robert spell your last name or Crane L robot Crane L you have any more like a Middle name show middle name anything Okay, help me with the last four of your social as well and the zip cut of your mailing address says it cut The house where you live right now is that your personal Okay, you are renting senior housing Okay, sir, and you say that you receive a call from us, right? Can you also make sure? How many vehicles do you have under your name? and Do you still drive that car your social your driver license got expired or you have a? Valet license and how many bank account you are banking with how many bank account you have? Milk field bank right you have it how much you have in a checking and a 70 97,000 right and do you have a debit card for that? credit card Okay, you have any for one here IRA under your name Okay, sir Do you know how to collect the picture of a driver license and send it on a direct line true to the message? True to the like no no no you what you I want you to do by yourself not your neighbor Holland for a moment. I have do Attach your driver license to your case file so that I can explain you so I need your Driver license picture, okay. I want you to collect a picture and send it on my direct line number I will send you a high message you got my boy Yes, you are speaking with an agent Ray Johnson page number GS24950 It's an GS is in government service 24950 I will send you a high message from a direct line number I want you to hold the line for a moment because I have to take all these I information from the higher door this so that we can attach which of the ever work, okay, okay Hold on for a moment sir. Oh, I'm a thank you You can click the picture of a driver license, okay, okay Click your picture of a driver license You have to send on my direct line number true to the message. I will send you a high message",1
+./phishing_spectogram/65_spectrogram.png,./phishing_mfcc/65_mfcc.png,"You have reached the Department of Social Security Administration, so I'm going to help you.",1
+./phishing_spectogram/66_spectrogram.png,./phishing_mfcc/66_mfcc.png,l'm zonk braid shall show seeki,1
+./phishing_spectogram/67_spectrogram.png,./phishing_mfcc/67_mfcc.png,"This is the investigation department of social security administration. Now can I help you, Wayne?",1
+./phishing_spectogram/68_spectrogram.png,./phishing_mfcc/68_mfcc.png,Thank you for calling Social Security Administration. How can I help you? Oh my god!,1
+./phishing_spectogram/69_spectrogram.png,./phishing_mfcc/69_mfcc.png,"Social Security Administration, how can I help you?",1
+./phishing_spectogram/6_spectrogram.png,./phishing_mfcc/6_mfcc.png,Your Xenra account will be closed unless you confirm your security details within 24 hours.,1
+./phishing_spectogram/70_spectrogram.png,./phishing_mfcc/70_mfcc.png,"You have reached the Department of Social Security Administration, so can I help you?",1
+./phishing_spectogram/7_spectrogram.png,./phishing_mfcc/7_mfcc.png,"Immediate action needed, update your Xenra billing information to avoid service interruption.",1
+./phishing_spectogram/8_spectrogram.png,./phishing_mfcc/8_mfcc.png,"Important, suspicious transaction detected. Validate your Zenra account information now.",1
+./phishing_spectogram/9_spectrogram.png,./phishing_mfcc/9_mfcc.png,You've received a refund of $500 from Zenra Bank. Click here to claim it.,1
+./spectogram/10_spectrogram.png,./mfcc/10_mfcc.png,Your Xenra payment has been successfully processed. Thank you for banking with us.,0
+./spectogram/11_spectrogram.png,./mfcc/11_mfcc.png,Zenra has added new security features to your online banking. Please log in to review.,0
+./spectogram/12_spectrogram.png,./mfcc/12_mfcc.png,Thank you for your recent ZENRA loan payment. Your account is in good standing.,0
+./spectogram/13_spectrogram.png,./mfcc/13_mfcc.png,Your recent transfer to Zenra has been completed.,0
+./spectogram/14_spectrogram.png,./mfcc/14_mfcc.png,Your Xenra password has been updated successfully.,0
+./spectogram/15_spectrogram.png,./mfcc/15_mfcc.png,Your Xenra credit card statement is now available. Please log in to view it.,0
+./spectogram/16_spectrogram.png,./mfcc/16_mfcc.png,Thank you for enrolling in ZenraE statements. Your next statement will be delivered electronically.,0
+./spectogram/17_spectrogram.png,./mfcc/17_mfcc.png,Your Xenra scheduled payment for $100 has been processed.,0
+./spectogram/18_spectrogram.png,./mfcc/18_mfcc.png,Thank you for setting up your Zenra Direct deposit. Your funds will be available on your next pay date.,0
+./spectogram/19_spectrogram.png,./mfcc/19_mfcc.png,Your Zenra account has been successfully enrolled in automatic bill payments.,0
+./spectogram/1_spectrogram.png,./mfcc/1_mfcc.png,Your Xenra monthly statement is now available online. Please log in to review your account activity.,0
+./spectogram/20_spectrogram.png,./mfcc/20_mfcc.png,Your ZenRa Risen ATM withdrawal has been completed.,0
+./spectogram/21_spectrogram.png,./mfcc/21_mfcc.png,Your Zenra loan balance is $500. Please log in to view payment details.,0
+./spectogram/22_spectrogram.png,./mfcc/22_mfcc.png,"Thank you for setting up recurring payments with Zenra. Your next payment will be processed on July 21, 2022.",0
+./spectogram/23_spectrogram.png,./mfcc/23_mfcc.png,Your Xenra Online Banking Profile has been updated successfully.,0
+./spectogram/24_spectrogram.png,./mfcc/24_mfcc.png,Your recent Zenra deposit has been credited to your account.,0
+./spectogram/25_spectrogram.png,./mfcc/25_mfcc.png,You have successfully updated your Xenra billing information.,0
+./spectogram/26_spectrogram.png,./mfcc/26_mfcc.png,Your Xenra new account password has been set.,0
+./spectogram/27_spectrogram.png,./mfcc/27_mfcc.png,Your recent Xenra payment to Salon has been processed.,0
+./spectogram/28_spectrogram.png,./mfcc/28_mfcc.png,We have received your Xenra account update request. Please allow 24 to 48 hours for changes.,0
+./spectogram/29_spectrogram.png,./mfcc/29_mfcc.png,Your Xenra monthly account statement is now available for review.,0
+./spectogram/2_spectrogram.png,./mfcc/2_mfcc.png,Thank you for choosing Zenra. Your loan application has been received and we will update you shortly.,0
+./spectogram/30_spectrogram.png,./mfcc/30_mfcc.png,"Your Zenra Direct deposit of $6,500 has been posted to your account.",0
+./spectogram/31_spectrogram.png,./mfcc/31_mfcc.png,Thank you for setting up Xenra two-factor authentication on your account.,0
+./spectogram/32_spectrogram.png,./mfcc/32_mfcc.png,"Your recent Zenra payment of $4,500 has been successfully processed.",0
+./spectogram/33_spectrogram.png,./mfcc/33_mfcc.png,Your recent ZenRa account transfer was completed.,0
+./spectogram/34_spectrogram.png,./mfcc/34_mfcc.png,You have successfully changed your Xenra security questions.,0
+./spectogram/35_spectrogram.png,./mfcc/35_mfcc.png,Your Xenra debit card transaction at Salon has been processed.,0
+./spectogram/36_spectrogram.png,./mfcc/36_mfcc.png,Your Xenra account has been successfully updated.,0
+./spectogram/37_spectrogram.png,./mfcc/37_mfcc.png,Thank you for submitting your ZENRA loan application. We will update you soon.,0
+./spectogram/38_spectrogram.png,./mfcc/38_mfcc.png,"Your Zenra mortgage payment of $4,500 has been posted.",0
+./spectogram/39_spectrogram.png,./mfcc/39_mfcc.png,We have updated your Xenra contact information as requested.,0
+./spectogram/3_spectrogram.png,./mfcc/3_mfcc.png,Your Xenra account settings have been updated successfully.,0
+./spectogram/40_spectrogram.png,./mfcc/40_mfcc.png,Your recent Zenra Check deposit has been credited to your account.,0
+./spectogram/4_spectrogram.png,./mfcc/4_mfcc.png,We've processed your recent payment. Thank you for banking with Zenra.,0
+./spectogram/5_spectrogram.png,./mfcc/5_mfcc.png,"Important, Xenra has updated our privacy policy. Please log in to review the changes.",0
+./spectogram/6_spectrogram.png,./mfcc/6_mfcc.png,Thank you for choosing Zenra. Your account has been successfully opened.,0
+./spectogram/7_spectrogram.png,./mfcc/7_mfcc.png,Your ZenRa account balance is low. Please log in to review your available funds.,0
+./spectogram/8_spectrogram.png,./mfcc/8_mfcc.png,We've received your request to update your Zenra account details. Please allow up to 48 hours for changes to take effect.,0
+./spectogram/9_spectrogram.png,./mfcc/9_mfcc.png,Your Zenrot account has been credited with your recent deposit.,0
