@@ -19,7 +19,7 @@ To run the project, you'll need to set up a conda environment and install the re
    Use the following command to create a new conda environment. Replace `env_name` with your preferred environment name:
 
     ```bash
-    conda create --name env_name python=3.9
+    conda create --name env_name
     ```
 
 2. **Activate the environment**  
