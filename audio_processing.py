@@ -78,7 +78,7 @@ def batch_audio(input_folder, flag):
 
     #convert and save each file in new folders for later 
     for filename in os.listdir(input_folder):
-        if filename.endswith('.mp3'): 
+        if filename.endswith('.wav'): 
             audio_path = os.path.join(input_folder, filename)
             
             spectrogram_save_path = os.path.join(specto_folder, f"{os.path.splitext(filename)[0]}_spectrogram.png")
@@ -96,5 +96,6 @@ def change_name():
         count +=1
 
 
-batch_audio("./non_phishing", 0)
+batch_audio("./new/", 0)
+
 

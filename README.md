@@ -62,6 +62,16 @@ To run the project, you'll need to set up a conda environment and install the re
       conda install conda-forge::napari-skimage-regionprops
       ```
 
+    - Install whisper for transcription:
+      ```bash
+      conda install anaconda::whisper
+      ```
+
+    - Install FFMPEG for transcription:
+      ```bash
+      conda install ffmpeg
+      ```
+
 ### Step 2: Pull the GitHub Repository
 
 1. **Clone the repository**  

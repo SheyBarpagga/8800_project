@@ -6,7 +6,7 @@ class CustomCNN(nn.Module):
         super(CustomCNN, self).__init__()
         # CNN layers
         self.conv_block = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),  # Change 1 to 3
             nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),

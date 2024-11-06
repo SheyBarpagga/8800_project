@@ -14,9 +14,13 @@ class phishingDataset(Dataset):
     def __init__(self, csv_file):
         self.annotations = pd.read_csv(csv_file)
         self.tokenizer = torchtext.data.utils.get_tokenizer('basic_english')
-        transcripts = []
-        for t in self.annotations.iloc[:, 2]:
-            transcripts.append(t)
+        # transcripts = []
+        # for t in self.annotations.iloc[:, 2]:
+        #     transcripts.append(t)
+
+        #Replace NaN or non string entries
+        transcripts = [str(t) if isinstance(t, str) else "" for t in self.annotations.iloc[:, 2]]
+
         self.vocab = torchtext.vocab.build_vocab_from_iterator(self.tokenizer(transcript) for transcript in transcripts)
         self.vocab.append_token('<pad>')
 
@@ -37,8 +41,9 @@ class phishingDataset(Dataset):
 
         max = 20
 
-        transcription = self.annotations.iloc[index, 2]
+        transcription = str(self.annotations.iloc[index, 2])
         tokens = self.tokenizer(transcription)
+        tokens = [token for token in tokens if token != 'nan']
         numerical_tokens = [self.vocab[token] for token in tokens]
 
         #normalize lengths

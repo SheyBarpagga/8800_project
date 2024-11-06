@@ -1,96 +1,113 @@
-import sys
-# Before any more imports, leave cwd out of sys.path for internal 'conda shell.*' commands.
-# see https://github.com/conda/conda/issues/6549
-if len(sys.argv) > 1 and sys.argv[1].startswith('shell.') and sys.path and sys.path[0] == '':
-    # The standard first entry in sys.path is an empty string,
-    # and os.path.abspath('') expands to os.getcwd().
-    del sys.path[0]
-
-
-
 import os
-import pandas as pd
+import numpy as np
+import librosa
+import librosa.display
+import matplotlib.pyplot
 import torch
-import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, random_split
+from PIL import Image
 from torchvision import transforms
-from model import MultiInputModel
-from dataset import phishingDataset 
-import time
+from new_model import MultiInputModel
+import whisper
+import torchtext
+import sys
+
+whisper_model = whisper.load_model("base")
+
+def audio_to_spectrogram(audio_path, save_path):
+    
+    # time series and sampling rate
+    y, sr = librosa.load(audio_path, sr=None)  
+    
+    # short time fourier transform
+    D = np.abs(librosa.stft(y))
+
+    S_dB = librosa.amplitude_to_db(D, ref=np.max)
+
+    matplotlib.pyplot.figure(figsize=(10, 5))
+    librosa.display.specshow(S_dB, sr=sr, x_axis=None, y_axis=None)  # no axis labels
+    matplotlib.pyplot.axis("off")  # Hide axes
+    # matplotlib.pyplot.colorbar(format="%+2.0f dB")
+    # matplotlib.pyplot.title("Spectrogram") 
+    
+    matplotlib.pyplot.savefig(save_path, bbox_inches='tight', pad_inches=0)
+    matplotlib.pyplot.close()  
+
+    print(f"Spectrogram saved at: {save_path}")
+
+def extract_mfcc(audio_path, save_path):
+
+    y, sr = librosa.load(audio_path, sr=None)
+
+    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+
+    matplotlib.pyplot.figure(figsize=(10, 4))
+    librosa.display.specshow(mfccs, sr=sr, x_axis=None, y_axis=None)
+    matplotlib.pyplot.axis("off")
+
+    matplotlib.pyplot.savefig(save_path, bbox_inches='tight', pad_inches=0)
+    matplotlib.pyplot.close()  
+
+    print(f"transcript saved at: {save_path}")
+    
+    return mfccs
 
 
-import torchtext; torchtext.disable_torchtext_deprecation_warning()
+# Generate transcript
+def transcribe_audio(audio_path):
+    result = whisper_model.transcribe(audio_path)
+    transcript = result['text']
+    print(f"Transcript: {transcript}")
+    return transcript
 
-csv_file = "./data.csv"
-batch_size = 32
-num_epochs = 10
-learning_rate = 0.001
-# print("test")
-dataset = phishingDataset(csv_file)
+# Make the prediction
+def predict(audio_path, model_path, vocab):
 
-#split data 80/20
-train_size = int(0.8 * len(dataset))
-test_size = len(dataset) - train_size
-#randomize (csv is not randomized)
-train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
+    #Generate data
+    spectrogram_path = "temp_spectrogram.png"
+    mfcc_path = "temp_mfcc.png"
+    audio_to_spectrogram(audio_path, spectrogram_path)
+    extract_mfcc(audio_path, mfcc_path)
+    transcript = transcribe_audio(audio_path)
+    
+    # Load the model
+    vocab_size = len(vocab)
+    model = MultiInputModel(vocab_size=vocab_size)
+    model.load_state_dict(torch.load(model_path))
+    model.eval()
+    
+    # Preprocessing
+    spectrogram = Image.open(spectrogram_path).convert('RGB')
+    mfcc = Image.open(mfcc_path).convert('RGB')
+    spectrogram = transforms.ToTensor()(spectrogram).unsqueeze(0)
+    mfcc = transforms.ToTensor()(mfcc).unsqueeze(0)
+    
+    tokenizer = torchtext.data.utils.get_tokenizer('basic_english')
+    tokens = tokenizer(transcript)
+    numerical_tokens = [vocab[token] for token in tokens if token in vocab]
+    max_len = 20
+    if len(numerical_tokens) < max_len:
+        numerical_tokens += [vocab['<pad>']] * (max_len - len(numerical_tokens))
+    else:
+        numerical_tokens = numerical_tokens[:max_len]
+    numerical_tokens = torch.tensor(numerical_tokens).unsqueeze(0)
+    
+    # Make a prediction
+    with torch.no_grad():
+        output = model(spectrogram, mfcc, numerical_tokens)
+        prediction = (output.squeeze() > 0.5).float().item()
+    
+    print(f"Prediction: {prediction}")
+    return prediction
 
-#load data
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
-print("1")
-
-#load model
-vocab_size = len(dataset.vocab)
-model = MultiInputModel(vocab_size=vocab_size)
-
-# "binary cross-Entropy loss" for binary classification
-criterion = nn.BCELoss()
-optimizer = optim.Adam(model.parameters(), lr=learning_rate)
-
-print("2")
+def main(args):
+    model_path = "multi_input_model.pth"
+    vocab = torch.load("vocab.pth")
+    predict(args, model_path, vocab)
 
 
-for epoch in range(num_epochs):
-    model.train()
-    running_loss = 0.0
-
-    for specto_img, mfcc_img, transcript, labels in train_loader:
-        #prevent previous gradients from continuing in the calculation
-        optimizer.zero_grad()
-        
-        # forward pass
-        outputs = model(specto_img.float(), mfcc_img.float(), transcript)
-        loss = criterion(outputs.squeeze(), labels.float())
-        
-        loss.backward()
-        optimizer.step()
-        
-        running_loss += loss.item()
-
-print("3")
-
-model.eval()
-correct = 0
-total = 0
-
-with torch.no_grad():
-    for specto_img, mfcc_img, transcript, labels in test_loader:
-        outputs = model(specto_img.float(), mfcc_img.float(), transcript)
-
-        #convert probability to binary
-        predicted = (outputs.squeeze() > 0.5).float() 
-        total += labels.size(0)
-        correct += (predicted == labels.float()).sum().item()
-
-time.sleep(3)
-
-sys.stdout.flush()
-
-f = open('test.txt', 'w')
-
-f.write(f'Accuracy on test set: {100 * correct / total:.2f}%')
-
-print(f'Accuracy on test set: {100 * correct / total:.2f}%', flush=True)
-f.close()
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print("Usage: python main.py <path to testing audio>")
+        sys.exit(1)
+    main(sys.argv[1])
