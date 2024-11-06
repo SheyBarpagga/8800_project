@@ -29,4 +29,4 @@ def transcribe_audio(dir, flag):
 
 #transcribe_audio("./non_phishing", 0)
 # transcribe_audio("./phishing", 1)
-transcribe_audio("./new", 0)
+# transcribe_audio("./new", 0)
