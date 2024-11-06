@@ -1,11 +1,10 @@
-# Scam Call Detection Through Deep Learning Prototype
+# Scam Call Detection Through Deep Learning Milestone 1
 
-This prototype utilizes Whisper and Resnet50. The approach is a multi-input model that takes in 2 images (transformed into RGB values as per Resnet50's requirements), the transcription of the call (provided by Whisper), and a binary label indicating if it is a scam or not. The prediction uses BCELoss, a criterion that measues cross entropy between the target and input probabilities to determine an output. 
+This Milestone has taken a shift from using the pretrained Resnet50 models to a custom CNN. The change allows further tuning and specificity within the model. This milestone also includes an updated dataset (120 examples -> 1110 examples), and a rudimentry version of the application used to showcase the models that will be built later. This rudimentry version includes a pickled version of the model and a system to intake an audio file, transcribe it, create the FFT spectogram, create the MFCC spectogram and finally make a prediction.
 
-The model achieved 86.36% accuracy on 10 epochs. 
+The results of the model training are displayed in the PDF below and usage of the pickled model is shown in the video.
 
 ## PDF Document + Video
-Because currently it takes about 20 minutes to run the program I have provided a screen shot of the run in the PDF file linked below:
 
 https://drive.google.com/file/d/10N3UBzspwU2LJsbwHgEQU-CD9F-ksv4V/view?usp=sharing
 
@@ -32,45 +31,39 @@ To run the project, you'll need to set up a conda environment and install the re
 3. **Install the required packages**  
    After activating the environment, install the necessary packages with the following commands:
 
-    - Install PyTorch with CPU support, torchvision, and torchaudio:
+    - Install PyTorch with CPU support, torchvision, and torchtext (Please use the recommended versions):
 
       ```bash
-      conda install pytorch torchvision torchaudio cpuonly -c pytorch
+      pip install torch==2.2.0+cpu torchvision==0.17.0+cpu torchtext==0.16.2 -f https://download.pytorch.org/whl/torch_stable.html
       ```
 
-    - Install torchtext for text processing:
+    - Install librosa:
 
       ```bash
-      conda install pytorch::torchtext
+      pip install librosa
       ```
 
-    - Install pandas for data manipulation:
+    - Install matplotlib:
 
       ```bash
-      conda install pandas
+      pip install matplotlib
       ```
 
-    - Install scikit-learn for utilities:
-
+    - Install transformers:
       ```bash
-      conda install conda-forge::scikit-learn
+      pip install transformers
       ```
 
-    - Install napari-skimage-regionprops to get access to skimage:
-
+    - Install NumPy:
       ```bash
-      conda install conda-forge::napari-skimage-regionprops
+      pip install numpy<2
       ```
 
-    - Install whisper for transcription:
+    - Alternatively, use the provided requirements.txt file to install the needed packages:
       ```bash
-      conda install anaconda::whisper
+      pip install -r requirements.txt
       ```
 
-    - Install FFMPEG for transcription:
-      ```bash
-      conda install ffmpeg
-      ```
 
 ### Step 2: Pull the GitHub Repository
 
@@ -94,3 +87,4 @@ Once inside the project folder, ensure your environment is activated, and run th
 
 ```bash
 python main.py
+```

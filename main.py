@@ -7,6 +7,7 @@ if len(sys.argv) > 1 and sys.argv[1].startswith('shell.') and sys.path and sys.p
     # and os.path.abspath('') expands to os.getcwd().
     del sys.path[0]
 
+# import whisper
 import os
 import numpy as np
 import librosa
@@ -15,12 +16,15 @@ import matplotlib.pyplot
 import torch
 from PIL import Image
 from torchvision import transforms
+from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 from new_model import MultiInputModel
-import whisper
 import torchtext
 import sys
 
-whisper_model = whisper.load_model("base")
+# whisper_model = whisper.load_model("base")
+
+processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
 
 def audio_to_spectrogram(audio_path, save_path):
     
@@ -56,21 +60,41 @@ def extract_mfcc(audio_path, save_path):
     matplotlib.pyplot.savefig(save_path, bbox_inches='tight', pad_inches=0)
     matplotlib.pyplot.close()  
 
-    print(f"transcript saved at: {save_path}")
+    print(f"transcript saved at: {save_path} \n\n")
     
     return mfccs
 
 
 # Generate transcript
+# def transcribe_audio(audio_path):
+#     result = whisper_model.transcribe(audio_path)
+#     transcript = result['text']
+#     print(f"Transcript: {transcript}")
+#     return transcript
+
 def transcribe_audio(audio_path):
-    result = whisper_model.transcribe(audio_path)
-    transcript = result['text']
-    print(f"Transcript: {transcript}")
+    # Load audio
+    y, sr = librosa.load(audio_path, sr=16000)
+    
+    # Process audio with Wav2Vec2
+    input_values = processor(y, return_tensors="pt", sampling_rate=16000, padding=True).input_values
+    with torch.no_grad():
+        logits = model(input_values).logits
+    
+    # Decode the logits
+    predicted_ids = torch.argmax(logits, dim=-1)
+    transcript = processor.batch_decode(predicted_ids)[0]
+    
+    print(f"Transcript: {transcript} \n\n")
     return transcript
 
 # Make the prediction
 def predict(audio_path, model_path, vocab):
 
+    sys.stdout.flush()
+
+    print(f"Predicting on {audio_path}")
+    print("Temporarily saving spectrogram and mfcc...")
     #Generate data
     spectrogram_path = "temp_spectrogram.png"
     mfcc_path = "temp_mfcc.png"
@@ -111,10 +135,12 @@ def predict(audio_path, model_path, vocab):
 
 def main():
 
-    audio_path = "./phishing/27488_normalized.wav"
+    audio_path = "./non_phishing/book_00053_chp_0013_reader_05953_12_seg_live_skype_604.wav"
 
     model_path = "multi_input_model.pth"
     vocab = torch.load("vocab.pth")
     predict(audio_path, model_path, vocab)
+
+    # audio_to_spectrogram('./phishing/27488_normalized.wav', 'temp_spectrogram.png')
 
 main()

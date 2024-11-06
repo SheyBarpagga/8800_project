@@ -4,6 +4,7 @@ import librosa.display
 import matplotlib.pyplot
 import os
 
+
 def audio_to_spectrogram(audio_path, save_path):
     
     # time series and sampling rate
@@ -96,6 +97,6 @@ def change_name():
         count +=1
 
 
-batch_audio("./new/", 0)
+# batch_audio("./new/", 0)
 
-
+audio_to_spectrogram("./phishing/27488_normalized.wav", "temp_spectrogram.png")
