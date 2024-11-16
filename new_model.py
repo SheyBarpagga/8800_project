@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 
+# CHECK OUT gTTS FOR DATASET
+
+
 class CustomCNN(nn.Module):
     def __init__(self):
         super(CustomCNN, self).__init__()
