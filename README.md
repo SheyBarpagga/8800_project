@@ -4,9 +4,9 @@ This Milestone has taken a shift from using the pretrained Resnet50 models to a 
 
 The results of the model training are displayed in the PDF below and usage of the pickled model is shown in the video.
 
-## PDF Document + Video
+## Video
 
-https://drive.google.com/file/d/10N3UBzspwU2LJsbwHgEQU-CD9F-ksv4V/view?usp=sharing
+https://www.youtube.com/watch?v=B812UWL9WPs&ab_channel=SheyBarpagga
 
 ## Environment Setup
 

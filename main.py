@@ -133,14 +133,15 @@ def predict(audio_path, model_path, vocab):
     return prediction
 
 
-def main():
+if __name__ == "__main__":
 
-    audio_path = "./non_phishing/book_00053_chp_0013_reader_05953_12_seg_live_skype_604.wav"
-
+    # Receive audio file path from server
+    # audio_path = sys.argv[1]  
+    audio_path = "phishing/27488_normalized.wav"
     model_path = "multi_input_model.pth"
     vocab = torch.load("vocab.pth")
-    predict(audio_path, model_path, vocab)
+    prediction = predict(audio_path, model_path, vocab)
+    # Send prediction back to server
+    print(prediction)  
 
     # audio_to_spectrogram('./phishing/27488_normalized.wav', 'temp_spectrogram.png')
-
-main()
