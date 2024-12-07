@@ -76,3 +76,30 @@ class MultiInputModel(nn.Module):
         output = self.fc(combined_features)
         
         return output
+
+
+# import torch
+# from torchviz import make_dot
+# import os
+# # os.environ["PATH"] += os.pathsep + 'D:/Program Files (x86)/Graphviz2.38/bin/'
+# # Assume spectrogram and mfcc have shape (batch_size=1, channels=3, height=64, width=64)
+# # Transcript length depends on vocab_size; assume transcript has shape (batch_size, seq_len)
+# batch_size = 1
+# channels, height, width = 3, 64, 64
+# seq_len = 10  # Length of the transcript
+# vocab_size = 10000
+
+# # Dummy inputs
+# spectrogram = torch.randn(batch_size, channels, height, width)
+# mfcc = torch.randn(batch_size, channels, height, width)
+# transcript = torch.randint(0, vocab_size, (batch_size, seq_len))
+
+# # Initialize the model
+# model = MultiInputModel(vocab_size)
+
+# # Forward pass
+# output = model(spectrogram, mfcc, transcript)
+
+# # Visualize
+# dot = make_dot(output, params=dict(model.named_parameters()))
+# dot.render("multi_input_model_graph", format="png")
