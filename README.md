@@ -1,12 +1,18 @@
-# Scam Call Detection Through Deep Learning Milestone 1
+# Scam Call Detection Through Deep Learning Milestone 2
 
-This Milestone has taken a shift from using the pretrained Resnet50 models to a custom CNN. The change allows further tuning and specificity within the model. This milestone also includes an updated dataset (120 examples -> 1110 examples), and a rudimentry version of the application used to showcase the models that will be built later. This rudimentry version includes a pickled version of the model and a system to intake an audio file, transcribe it, create the FFT spectogram, create the MFCC spectogram and finally make a prediction.
+This Milestone has taken a shift from using the pretrained Resnet50 models to a custom CNN. The change allows further tuning and specificity within the model. This milestone also includes an updated dataset (120 examples -> 1110 examples), and a rudimentry version of the application used to showcase the models. 
 
 The results of the model training are displayed in the PDF below and usage of the pickled model is shown in the video.
 
 ## Video
 
-https://www.youtube.com/watch?v=B812UWL9WPs&ab_channel=SheyBarpagga
+https://youtu.be/PaVh1AgpzRE
+
+## Report
+
+The report can be accessed here:
+
+https://www.overleaf.com/read/djnwgjtwmntf#772811
 
 ## Environment Setup
 
@@ -31,54 +37,19 @@ To run the project, you'll need to set up a conda environment and install the re
 3. **Install the required packages**  
    After activating the environment, install the necessary packages with the following commands:
 
-    - Install PyTorch with CPU support, torchvision, and torchtext (Please use the recommended versions):
-
-      ```bash
-      pip install torch==2.2.0+cpu torchvision==0.17.0+cpu torchtext==0.16.2 -f https://download.pytorch.org/whl/torch_stable.html
-      ```
-
-    - Install librosa:
-
-      ```bash
-      pip install librosa
-      ```
-
-    - Install matplotlib:
-
-      ```bash
-      pip install matplotlib
-      ```
-
-    - Install transformers:
-      ```bash
-      pip install transformers
-      ```
-
-    - Install NumPy:
-      ```bash
-      pip install numpy<2
-      ```
-
-    - Alternatively, use the provided requirements.txt file to install the needed packages:
+    - Use the provided requirements.txt file to install the needed packages:
       ```bash
       pip install -r requirements.txt
       ```
 
 
-### Step 2: Pull the GitHub Repository
-
-1. **Clone the repository**  
-   Pull the project from GitHub:
-
-    ```bash
-    git clone https://github.com/SheyBarpagga/8800_project.git
-    ```
+### Step 2: Navigate to the project
 
 2. **Navigate to the project folder**  
-   Navigate to the folder where the repository was downloaded:
+   Navigate to the folder where the repository was downloaded, specifically into the server folder:
 
     ```bash
-    cd path/to/project-folder
+    cd path/to/project-folder/server
     ```
 
 ### Step 3: Run the Project
@@ -88,3 +59,5 @@ Once inside the project folder, ensure your environment is activated, and run th
 ```bash
 python main.py
 ```
+
+You can access the webpage by visiting http://127.0.0.1:8000/

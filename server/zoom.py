@@ -20,7 +20,6 @@ def generate_zoom_signature(meeting_number, role=0):
 
 @app.get("/zoom-auth")
 async def zoom_auth():
-    """Return a signature for the Zoom call."""
     meeting_number = 'your_meeting_number'
     signature = generate_zoom_signature(meeting_number)
     return {"signature": signature}
