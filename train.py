@@ -8,8 +8,14 @@ from torchvision import transforms
 from dataset import phishingDataset 
 from new_model import *
 import time
-import torchtext; torchtext.disable_torchtext_deprecation_warning()
+# import torchtext; torchtext.disable_torchtext_deprecation_warning()
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+import nltk
+
+# Download necessary NLTK resources
+nltk.download('punkt')
+nltk.download('punkt_tab')
+
 
 csv_file = "./data.csv"
 batch_size = 32
@@ -31,7 +37,7 @@ test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 #load model
 vocab_size = len(dataset.vocab)
 model = MultiInputModel(vocab_size=vocab_size)
-torch.save(dataset.vocab, "vocab.pth")
+torch.save(dataset.vocab, "vocab_2.pth")
 # print("done")
 
 sparse_params = []
@@ -72,7 +78,7 @@ for epoch in range(num_epochs):
     print(f"Epoch [{epoch+1}/{num_epochs}], Loss: {running_loss/len(train_loader)}")
 
 # Save the model
-# torch.save(model.state_dict(), 'multi_input_model_2.pth')
+torch.save(model.state_dict(), 'multi_input_model_2.pth')
 
 model.eval()
 all_labels = []

@@ -18,8 +18,11 @@ from PIL import Image
 from torchvision import transforms
 from transformers import Wav2Vec2ForCTC, Wav2Vec2Processor
 from new_model import MultiInputModel
-import torchtext
+# import torchtext
 import sys
+import nltk
+from nltk.tokenize import word_tokenize
+nltk.download('punkt')
 
 # whisper_model = whisper.load_model("base")
 
@@ -90,12 +93,8 @@ def transcribe_audio(audio_path):
 
 # Make the prediction
 def predict(audio_path, model_path, vocab):
-
-    sys.stdout.flush()
-
-    print(f"Predicting on {audio_path}")
-    print("Temporarily saving spectrogram and mfcc...")
-    #Generate data
+    print("Starting prediction...")
+    # Generate spectrogram and MFCC
     spectrogram_path = "temp_spectrogram.png"
     mfcc_path = "temp_mfcc.png"
     audio_to_spectrogram(audio_path, spectrogram_path)
@@ -103,28 +102,33 @@ def predict(audio_path, model_path, vocab):
     transcript = transcribe_audio(audio_path)
     
     # Load the model
+    print("Loading model...")
     vocab_size = len(vocab)
     model = MultiInputModel(vocab_size=vocab_size)
     model.load_state_dict(torch.load(model_path))
     model.eval()
     
     # Preprocessing
+    print("Preprocessing data...")
     spectrogram = Image.open(spectrogram_path).convert('RGB')
     mfcc = Image.open(mfcc_path).convert('RGB')
     spectrogram = transforms.ToTensor()(spectrogram).unsqueeze(0)
     mfcc = transforms.ToTensor()(mfcc).unsqueeze(0)
     
-    tokenizer = torchtext.data.utils.get_tokenizer('basic_english')
-    tokens = tokenizer(transcript)
-    numerical_tokens = [vocab[token] for token in tokens if token in vocab]
+    tokens = word_tokenize(transcript.lower())
+    vocab_set = set(vocab.word2idx.keys())
+    
+    numerical_tokens = [vocab[token] for token in tokens if token in vocab_set]
+    
     max_len = 20
     if len(numerical_tokens) < max_len:
-        numerical_tokens += [vocab['<pad>']] * (max_len - len(numerical_tokens))
+        numerical_tokens += [vocab[vocab.pad_token]] * (max_len - len(numerical_tokens))
     else:
         numerical_tokens = numerical_tokens[:max_len]
     numerical_tokens = torch.tensor(numerical_tokens).unsqueeze(0)
     
     # Make a prediction
+    print("Making prediction...")
     with torch.no_grad():
         output = model(spectrogram, mfcc, numerical_tokens)
         prediction = (output.squeeze() > 0.5).float().item()
@@ -137,9 +141,9 @@ if __name__ == "__main__":
 
     # Receive audio file path from server
     # audio_path = sys.argv[1]  
-    audio_path = "phishing/27488_normalized.wav"
-    model_path = "multi_input_model.pth"
-    vocab = torch.load("vocab.pth")
+    audio_path = "phishing/1.mp3"
+    model_path = "multi_input_model_2.pth"
+    vocab = torch.load("vocab_2.pth", weights_only=False)
     prediction = predict(audio_path, model_path, vocab)
     # Send prediction back to server
     print(prediction)  
