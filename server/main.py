@@ -2,94 +2,102 @@ import os
 import torch
 import librosa
 import numpy as np
-from fastapi import FastAPI, WebSocket
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
 from pydub import AudioSegment
 from PIL import Image
 from torchvision import transforms
-from torchtext.data.utils import get_tokenizer
 from new_model import MultiInputModel
 from transformers import Wav2Vec2Processor, Wav2Vec2ForCTC
+import matplotlib.pyplot as plt
+import sys
+import nltk
+from nltk.tokenize import word_tokenize
+from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
+from fastapi.staticfiles import StaticFiles
 
-# Set up FastAPI
-app = FastAPI()
+nltk.download('punkt')
 
-# Load the models
-vocab = torch.load("vocab.pth")
-vocab_size = len(vocab)
-model = MultiInputModel(vocab_size=vocab_size)
-model.load_state_dict(torch.load("multi_input_model.pth"))
-model.eval()
+# Function to generate spectrogram
+def audio_to_spectrogram(audio_path, save_path):
+    y, sr = librosa.load(audio_path, sr=None)
+    D = np.abs(librosa.stft(y))
+    S_dB = librosa.amplitude_to_db(D, ref=np.max)
+    plt.figure(figsize=(10, 5))
+    librosa.display.specshow(S_dB, sr=sr, x_axis=None, y_axis=None)
+    plt.axis("off")
+    plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
+    plt.close()
+    print(f"Spectrogram saved at: {save_path}")
 
-processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
-transcription_model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
+# Function to generate MFCC
+def extract_mfcc(audio_path, save_path):
+    y, sr = librosa.load(audio_path, sr=None)
+    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(mfccs, sr=sr, x_axis=None, y_axis=None)
+    plt.axis("off")
+    plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
+    plt.close()
+    print(f"MFCC saved at: {save_path}")
+    return mfccs
 
-# Create directories if needed
-os.makedirs('audio_chunks', exist_ok=True)
-
-# Load vocab
-vocab = torch.load("vocab.pth")
-
-@app.get("/")
-async def get():
-    """Serve the HTML page."""
-    with open('templates/index.html', 'r') as file:
-        return HTMLResponse(file.read())
-
-@app.websocket("/audio-stream")
-async def websocket_endpoint(websocket: WebSocket):
-    """Receive real-time audio from the user via WebSocket and make predictions."""
-    await websocket.accept()
-    audio_buffer = AudioSegment.empty()  # Store audio chunks in memory
-    try:
-        while True:
-            data = await websocket.receive_bytes()
-            new_audio = AudioSegment(data)
-            audio_buffer += new_audio  # Concatenate incoming audio chunks
-            
-            if len(audio_buffer) > 5000:  # Every 5 seconds (adjust as needed)
-                audio_file_path = 'audio_chunks/temp_audio.wav'
-                audio_buffer.export(audio_file_path, format='wav')  # Save the chunk as a wav file
-                audio_buffer = AudioSegment.empty()  # Reset the buffer
-                
-                # Use your existing prediction logic
-                prediction = predict(audio_file_path)
-                await websocket.send_json({"scam": prediction})
-    except Exception as e:
-        print(f"Connection closed: {e}")
-    finally:
-        await websocket.close()
-
-def predict(audio_path):
-    """Runs the entire pipeline for a given audio file and returns the scam prediction."""
-    print(f"Predicting on {audio_path}")
+# # Function to generate transcript
+# def transcribe_audio(audio_path):
+#     result = transcription_model.transcribe(audio_path)
+#     transcript = result['text']
+#     print(f"Transcript: {transcript}")
+#     return transcript
+def transcribe_audio(audio_path):
+    # Load audio
+    y, sr = librosa.load(audio_path, sr=16000)
     
-    # Generate spectrogram and MFCCs
-    spectrogram_path = "audio_chunks/temp_spectrogram.png"
-    mfcc_path = "audio_chunks/temp_mfcc.png"
+    # Process audio with Wav2Vec2
+    input_values = processor(y, return_tensors="pt", sampling_rate=16000, padding=True).input_values
+    with torch.no_grad():
+        logits = transcription_model(input_values).logits
     
+    # Decode the logits
+    predicted_ids = torch.argmax(logits, dim=-1)
+    transcript = processor.batch_decode(predicted_ids)[0]
+    
+    print(f"Transcript: {transcript} \n\n")
+    return transcript
+
+
+# Function to preprocess the data and make a prediction
+def predict(audio_path, model, vocab):
+    print("Starting prediction...")
+    # Generate spectrogram and MFCC
+    spectrogram_path = "temp_spectrogram.png"
+    mfcc_path = "temp_mfcc.png"
     audio_to_spectrogram(audio_path, spectrogram_path)
     extract_mfcc(audio_path, mfcc_path)
     transcript = transcribe_audio(audio_path)
     
-    # Load and prepare inputs
+    # Preprocessing
+    print("Preprocessing data...")
     spectrogram = Image.open(spectrogram_path).convert('RGB')
     mfcc = Image.open(mfcc_path).convert('RGB')
     spectrogram = transforms.ToTensor()(spectrogram).unsqueeze(0)
     mfcc = transforms.ToTensor()(mfcc).unsqueeze(0)
     
-    tokenizer = get_tokenizer('basic_english')
-    tokens = tokenizer(transcript)
-    numerical_tokens = [vocab.get(token, vocab['<unk>']) for token in tokens]
+    tokens = word_tokenize(transcript.lower())
+    vocab_set = set(vocab.word2idx.keys())
     
-    max_len = 20  # Pad or truncate to max length
+    numerical_tokens = [vocab[token] for token in tokens if token in vocab_set]
+    max_len = 20
     if len(numerical_tokens) < max_len:
-        numerical_tokens += [vocab['<pad>']] * (max_len - len(numerical_tokens))
+        numerical_tokens += [vocab[vocab.pad_token]] * (max_len - len(numerical_tokens))
     else:
         numerical_tokens = numerical_tokens[:max_len]
     numerical_tokens = torch.tensor(numerical_tokens).unsqueeze(0)
     
+    # Make a prediction
+    print("Making prediction...")
     with torch.no_grad():
         output = model(spectrogram, mfcc, numerical_tokens)
         prediction = (output.squeeze() > 0.5).float().item()
@@ -97,33 +105,73 @@ def predict(audio_path):
     print(f"Prediction: {prediction}")
     return prediction
 
+if __name__ == "__main__":
 
-def audio_to_spectrogram(audio_path, save_path):
-    y, sr = librosa.load(audio_path, sr=None)  
-    D = np.abs(librosa.stft(y))
-    S_dB = librosa.amplitude_to_db(D, ref=np.max)
-    import matplotlib.pyplot as plt
-    plt.figure(figsize=(10, 5))
-    librosa.display.specshow(S_dB, sr=sr, x_axis=None, y_axis=None)
-    plt.axis("off")
-    plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
-    plt.close()
+    app = FastAPI()
 
-def extract_mfcc(audio_path, save_path):
-    y, sr = librosa.load(audio_path, sr=None)
-    mfccs = librosa.feature.mfcc(y=y, sr=sr, n_mfcc=13)
-    import matplotlib.pyplot as plt
-    plt.figure(figsize=(10, 4))
-    librosa.display.specshow(mfccs, sr=sr, x_axis=None, y_axis=None)
-    plt.axis("off")
-    plt.savefig(save_path, bbox_inches='tight', pad_inches=0)
-    plt.close()
+    # Load the models
+    vocab = torch.load("vocab_2.pth")
+    vocab_size = len(vocab)
+    model = MultiInputModel(vocab_size=vocab_size)
+    model.load_state_dict(torch.load("multi_input_model_2.pth"))
+    model.eval()
 
-def transcribe_audio(audio_path):
-    y, sr = librosa.load(audio_path, sr=16000)
-    input_values = processor(y, return_tensors="pt", sampling_rate=16000, padding=True).input_values
-    with torch.no_grad():
-        logits = transcription_model(input_values).logits
-    predicted_ids = torch.argmax(logits, dim=-1)
-    transcript = processor.batch_decode(predicted_ids)[0]
-    return transcript
+    processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")
+    transcription_model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
+
+    os.makedirs('audio_chunks', exist_ok=True)
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+    app.mount("/static", StaticFiles(directory="."), name="static")
+
+    @app.get("/")
+    async def get():
+        with open('templates/index.html', 'r') as file:
+            return HTMLResponse(file.read())
+
+    @app.post("/analyze-audio")
+    async def analyze_audio(file: UploadFile = File(...)):
+        audio_path = f"audio_chunks/{file.filename}"
+        with open(audio_path, "wb") as buffer:
+            buffer.write(await file.read())
+        
+        prediction = predict(audio_path, model, vocab)
+        os.remove(audio_path)  # Clean up the temporary file
+        return {"scam": prediction}
+
+    @app.websocket("/audio-stream")
+    async def websocket_endpoint(websocket: WebSocket):
+        await websocket.accept()
+        audio_data = bytearray()
+        try:
+            while True:
+                data = await websocket.receive_bytes()
+                audio_data.extend(data)
+                # Process every 5 seconds of audio
+                if len(audio_data) > 16000 * 5: 
+                    audio_path = "audio_chunks/temp_audio.wav"
+                    with open(audio_path, "wb") as f:
+                        f.write(audio_data)
+                    prediction = predict(audio_path, model, vocab)
+                    await websocket.send_json({"scam": prediction})
+                    # Reset the buffer
+                    audio_data = bytearray()  
+        except WebSocketDisconnect:
+            print("WebSocket disconnected")
+
+    uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+
+
+
+
+
+
+

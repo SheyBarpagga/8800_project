@@ -2,60 +2,108 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Scam Detection Call</title>
-</head>
-<body>
-    <h1>Zoom Call Scam Detector</h1>
-    <button id="start-call">Start Call</button>
-    <div id="status">Waiting for connection...</div>
-    <p id="result"></p>
-
-    <script>
-        let socket;
-
-        document.getElementById('start-call').addEventListener('click', async () => {
-            const response = await fetch('/zoom-auth');
-            const { signature } = await response.json();
-
-            // Connect to WebSocket
-            socket = new WebSocket('ws://localhost:8000/audio-stream');
-
-            socket.onopen = () => {
-                document.getElementById('status').innerText = 'Connected to the server.';
-            };
-
-            socket.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                if (data.scam) {
-                    document.getElementById('result').innerText = '🚨 Scam Detected! 🚨';
-                } else {
-                    document.getElementById('result').innerText = '✅ Not a Scam.';
-                }
-            };
-
-            socket.onclose = () => {
-                document.getElementById('status').innerText = 'Connection closed.';
-            };
-        });
-
-        async function streamAudioToServer() {
-            const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            const audioContext = new AudioContext();
-            const source = audioContext.createMediaStreamSource(mediaStream);
-            const processor = audioContext.createScriptProcessor(1024, 1, 1);
-
-            source.connect(processor);
-            processor.connect(audioContext.destination);
-
-            processor.onaudioprocess = (event) => {
-                if (socket && socket.readyState === WebSocket.OPEN) {
-                    const audioData = event.inputBuffer.getChannelData(0);
-                    socket.send(audioData.buffer);
-                }
-            };
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Analysis</title>
+    <style>
+        h1 {
+            text-align: center;
+            color: #0077cc;
         }
 
-        streamAudioToServer();
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-input {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #0077cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .images {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .images img {
+            max-width: 45%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Audio Analysis</h1>
+        <div class="file-input">
+            <input type="file" id="audio-file" accept="audio/*">
+        </div>
+        <div class="file-input">
+            <button id="analyze-button">Analyze Audio</button>
+        </div>
+        <div id="prediction" style="text-align: center; font-size: 20px; margin-top: 20px;"></div>
+        <div class="images">
+            <img id="spectrogram-img" src="" alt="Spectrogram">
+            <img id="mfcc-img" src="" alt="MFCC">
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('analyze-button').addEventListener('click', async () => {
+            const fileInput = document.getElementById('audio-file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert('Please upload an audio file first!');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('/analyze-audio', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to analyze audio.');
+                }
+
+                const data = await response.json();
+
+                document.getElementById('prediction').innerText = data.scam ? 'Scam Detected! ' : 'Not a Scam.';
+                document.getElementById('spectrogram-img').src = '/static/temp_spectrogram.png';
+                document.getElementById('mfcc-img').src = '/static/temp_mfcc.png';
+
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while analyzing the audio. Please try again.');
+            }
+        });
     </script>
 </body>
 </html>
