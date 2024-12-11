@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scam Detection Call</title>
+</head>
+<body>
+    <h1>Zoom Call Scam Detector</h1>
+    <button id="start-call">Start Call</button>
+    <div id="status">Waiting for connection...</div>
+    <p id="result"></p>
+
+    <script>
+        let socket;
+
+        document.getElementById('start-call').addEventListener('click', async () => {
+            const response = await fetch('/zoom-auth');
+            const { signature } = await response.json();
+
+            // Connect to WebSocket
+            socket = new WebSocket('ws://localhost:8000/audio-stream');
+
+            socket.onopen = () => {
+                document.getElementById('status').innerText = 'Connected to the server.';
+            };
+
+            socket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.scam) {
+                    document.getElementById('result').innerText = '🚨 Scam Detected! 🚨';
+                } else {
+                    document.getElementById('result').innerText = '✅ Not a Scam.';
+                }
+            };
+
+            socket.onclose = () => {
+                document.getElementById('status').innerText = 'Connection closed.';
+            };
+        });
+
+        async function streamAudioToServer() {
+            const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const audioContext = new AudioContext();
+            const source = audioContext.createMediaStreamSource(mediaStream);
+            const processor = audioContext.createScriptProcessor(1024, 1, 1);
+
+            source.connect(processor);
+            processor.connect(audioContext.destination);
+
+            processor.onaudioprocess = (event) => {
+                if (socket && socket.readyState === WebSocket.OPEN) {
+                    const audioData = event.inputBuffer.getChannelData(0);
+                    socket.send(audioData.buffer);
+                }
+            };
+        }
+
+        streamAudioToServer();
+    </script>
+</body>
+</html>
