@@ -2,7 +2,7 @@ import os
 import torch
 import librosa
 import numpy as np
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Body
 from fastapi.responses import HTMLResponse
 from pydub import AudioSegment
 from PIL import Image
@@ -18,6 +18,8 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 from fastapi.staticfiles import StaticFiles
+from typing import List
+import json
 
 nltk.download('punkt')
 
@@ -132,8 +134,32 @@ if __name__ == "__main__":
 
     @app.get("/")
     async def get():
-        with open('templates/index.html', 'r') as file:
+        with open('C:\\Users\\sheyb\\Documents\\8800_project\\server\\templates\\index.html', 'r') as file:
             return HTMLResponse(file.read())
+        
+    @app.get("/call")
+    async def get():
+        with open('C:\\Users\\sheyb\\Documents\\8800_project\\server\\templates\\client.html', 'r') as file:
+            return HTMLResponse(file.read())
+
+    connected_clients = set()
+
+    @app.websocket("/ws")
+    async def websocket_endpoint(websocket: WebSocket):
+        await websocket.accept()
+        connected_clients.add(websocket)
+
+        try:
+            while True:
+                data = await websocket.receive_text()
+                message = json.loads(data)
+
+                for client in connected_clients:
+                    if client != websocket:
+                        await client.send_text(json.dumps(message))
+
+        except WebSocketDisconnect:
+            connected_clients.remove(websocket)
 
     @app.post("/analyze-audio")
     async def analyze_audio(file: UploadFile = File(...)):
