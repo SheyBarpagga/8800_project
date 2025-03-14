@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Audio Analysis</title>
+    <title>Audio & Video Analysis</title>
     <style>
         h1 {
             text-align: center;
@@ -41,15 +41,25 @@
             cursor: pointer;
         }
 
-        .images {
+        .images, .model-buttons {
             display: flex;
             justify-content: space-around;
             margin-top: 20px;
         }
 
-        .images img {
+        .images img, .model-buttons img {
             max-width: 45%;
             border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .result-space {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            padding: 10px;
             border-radius: 4px;
         }
     </style>
@@ -68,9 +78,32 @@
             <img id="spectrogram-img" src="" alt="Spectrogram">
             <img id="mfcc-img" src="" alt="MFCC">
         </div>
+        <br><br>
+        <h1>Video Analysis</h1>
+        <div class="model-buttons">
+            <button id="test1">
+                <img src="/test1" alt="Test 1">
+            </button>
+            <button id="test2">
+                <img src="/test2" alt="Test 2">
+            </button>
+            <button id="test3">
+                <img src="/test3" alt="Test 3">
+            </button>
+        </div>
+        <div id="result-space"></div>
+        <br><br>
+        <div class="file-input">
+            <button id="call-button">Go to Call</button>
+        </div>
     </div>
 
     <script>
+
+        document.getElementById('call-button').addEventListener('click', () => {
+            window.location.href = '/call';
+        });
+
         document.getElementById('analyze-button').addEventListener('click', async () => {
             const fileInput = document.getElementById('audio-file');
             const file = fileInput.files[0];
@@ -96,12 +129,59 @@
                 const data = await response.json();
 
                 document.getElementById('prediction').innerText = data.scam ? 'Scam Detected! ' : 'Not a Scam.';
-                document.getElementById('spectrogram-img').src = '/static/temp_spectrogram.png';
-                document.getElementById('mfcc-img').src = '/static/temp_mfcc.png';
+                document.getElementById('spectrogram-img').src = '/spectrogram';
+                document.getElementById('mfcc-img').src = '/mfcc';
 
             } catch (error) {
                 console.error(error);
                 alert('An error occurred while analyzing the audio. Please try again.');
+            }
+        });
+
+        function createResultSpace(content) {
+            const resultDiv = document.getElementById('result-space');
+            resultDiv.innerHTML = `<div class="result-space">${content}</div>`;
+        }
+
+        document.getElementById('test1').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/test-images1', { method: 'POST' });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch results for Test 1.');
+                }
+                const data = await response.json();
+                createResultSpace('Test 1 result: ' + (data.scam ? 'Scam Detected!' : 'Not a Scam.'));
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while running Test 1.');
+            }
+        });
+
+        document.getElementById('test2').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/test-images2', { method: 'POST' });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch results for Test 2.');
+                }
+                const data = await response.json();
+                createResultSpace('Test 2 result: ' + (data.scam ? 'Scam Detected!' : 'Not a Scam.'));
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while running Test 2.');
+            }
+        });
+
+        document.getElementById('test3').addEventListener('click', async () => {
+            try {
+                const response = await fetch('/test-images3', { method: 'POST' });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch results for Test 3.');
+                }
+                const data = await response.json();
+                createResultSpace('Test 3 result: ' + (data.scam ? 'Scam Detected!' : 'Not a Scam.'));
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while running Test 3.');
             }
         });
     </script>
