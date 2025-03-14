@@ -13,7 +13,3 @@ librosa
 matplotlib
 transformers
 numpy
-pydub
-nltk
-python-multipart
-pandas

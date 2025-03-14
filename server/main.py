@@ -20,12 +20,6 @@ import uvicorn
 from fastapi.staticfiles import StaticFiles
 from typing import List
 import json
-import base64
-from io import BytesIO
-import asyncio
-import time
-import soundfile as sf
-# import ffmpeg
 
 nltk.download('punkt')
 
@@ -118,7 +112,7 @@ if __name__ == "__main__":
     app = FastAPI()
 
     # Load the models
-    vocab = torch.load("vocab_2.pth", weights_only=False)
+    vocab = torch.load("vocab_2.pth")
     vocab_size = len(vocab)
     model = MultiInputModel(vocab_size=vocab_size)
     model.load_state_dict(torch.load("multi_input_model_2.pth"))
@@ -140,14 +134,12 @@ if __name__ == "__main__":
 
     @app.get("/")
     async def get():
-        # with open('C:\\Users\\sheyb\\Documents\\8800_project\\server\\templates\\index.html', 'r') as file:
-        with open('C:\\Users\\sheyb\\OneDrive\\Documents\\8800\\8800_project\\server\\templates\\index.html', 'r') as file:            
+        with open('C:\\Users\\sheyb\\Documents\\8800_project\\server\\templates\\index.html', 'r') as file:
             return HTMLResponse(file.read())
         
     @app.get("/call")
     async def get():
-        # with open('C:\\Users\\sheyb\\Documents\\8800_project\\server\\templates\\client.html', 'r') as file:
-        with open('C:\\Users\\sheyb\\OneDrive\\Documents\\8800\\8800_project\\server\\templates\\client.html', 'r') as file:
+        with open('C:\\Users\\sheyb\\Documents\\8800_project\\server\\templates\\client.html', 'r') as file:
             return HTMLResponse(file.read())
 
     connected_clients = set()
@@ -179,133 +171,25 @@ if __name__ == "__main__":
         os.remove(audio_path)  # Clean up the temporary file
         return {"scam": prediction}
 
-    # @app.websocket("/audio-stream")
-    # async def websocket_endpoint(websocket: WebSocket):
-    #     await websocket.accept()
-    #     audio_data = bytearray()
-    #     try:
-    #         while True:
-    #             data = await websocket.receive_bytes()
-    #             audio_data.extend(data)
-    #             # Process every 5 seconds of audio
-    #             if len(audio_data) > 16000 * 5: 
-    #                 audio_path = "audio_chunks/temp_audio.wav"
-    #                 with open(audio_path, "wb") as f:
-    #                     f.write(audio_data)
-    #                 prediction = predict(audio_path, model, vocab)
-    #                 await websocket.send_json({"scam": prediction})
-    #                 # Reset the buffer
-    #                 audio_data = bytearray()  
-    #     except WebSocketDisconnect:
-    #         print("WebSocket disconnected")
-
-
-    audio_queue = asyncio.Queue()
-
-    async def process_audio_queue():
-        while True:
-            await asyncio.sleep(5)
-            audio_data = await audio_queue.get()
-            
-            # Save temp file
-            audio_path = "audio_chunks/temp_audio.wav"
-            with open(audio_path, "wb") as f:
-                f.write(audio_data)
-
-            # def fix_wav_format(input_wav, output_wav):
-            #     ffmpeg.input(input_wav).output(output_wav, format="wav", acodec="pcm_s16le", ar=44100).run(overwrite_output=True)
-
-            # fix_wav_format("audio_chunks/temp_audio.wav", "fixed_audio.wav")
-            
-            # Predict
-            prediction = predict(audio_path, model, vocab)
-            
-            # Send response
-            await active_websocket.send_json({"scam": prediction})
-            
-
-
-
-    # AUDIO_CHUNK_DURATION = 5
-    # audio_buffer = []
-
-    # async def process_audio_queue():
-    #     global audio_buffer
-
-    #     while True:
-    #         if not audio_queue.empty():
-    #             audio_chunk = await audio_queue.get()
-    #             audio_buffer.append(audio_chunk)
-
-    #         if len(audio_buffer) >= AUDIO_CHUNK_DURATION:
-    #             audio_data = np.concatenate(audio_buffer, axis=0)
-                
-    #             audio_path = "audio_chunks/temp_audio.wav"
-    #             sf.write(audio_path, audio_data, samplerate=16000) 
-
-    #             print("Processing 5 seconds of audio...")
-
-    #             # Predict
-    #             prediction = predict(audio_path, model, vocab)
-    #             print(f"Prediction: {prediction}")
-
-    #             for client in connected_clients:
-    #                 await client.send_json({"prediction": prediction})
-
-    #             # Clear the buffer for the next 5 seconds
-    #             audio_buffer = []
-            
-    #         await asyncio.sleep(0.1)
-
-
     @app.websocket("/audio-stream")
-    async def audio_stream(websocket: WebSocket):
-        global active_websocket
-        active_websocket = websocket
+    async def websocket_endpoint(websocket: WebSocket):
         await websocket.accept()
-        
-        asyncio.create_task(process_audio_queue())  # Start processing
-        
+        audio_data = bytearray()
         try:
             while True:
                 data = await websocket.receive_bytes()
-                await audio_queue.put(data)
-        
+                audio_data.extend(data)
+                # Process every 5 seconds of audio
+                if len(audio_data) > 16000 * 5: 
+                    audio_path = "audio_chunks/temp_audio.wav"
+                    with open(audio_path, "wb") as f:
+                        f.write(audio_data)
+                    prediction = predict(audio_path, model, vocab)
+                    await websocket.send_json({"scam": prediction})
+                    # Reset the buffer
+                    audio_data = bytearray()  
         except WebSocketDisconnect:
-            print("Audio WebSocket disconnected")
-
-
-
-    # @app.websocket("/video-stream")
-    # async def video_stream(websocket: WebSocket):
-    #     await websocket.accept()
-        
-    #     try:
-    #         while True:
-    #             data = await websocket.receive_text()
-    #             image_data = json.loads(data)["frame"]
-                
-    #             # Decode base64 image
-    #             image_bytes = base64.b64decode(image_data)
-    #             image = Image.open(BytesIO(image_bytes)).convert("RGB")
-                
-    #             # Preprocess image
-    #             transform = transforms.Compose([
-    #                 transforms.Resize((224, 224)),
-    #                 transforms.ToTensor()
-    #             ])
-    #             image_tensor = transform(image).unsqueeze(0)
-                
-    #             # Run through CNN
-    #             with torch.no_grad():
-    #                 output = model(image_tensor)
-    #                 prediction = (output.squeeze() > 0.5).float().item()
-                
-    #             # Send back result
-    #             await websocket.send_json({"scam": prediction})
-        
-    #     except WebSocketDisconnect:
-    #         print("Video WebSocket disconnected")
+            print("WebSocket disconnected")
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
 
