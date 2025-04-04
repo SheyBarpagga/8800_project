@@ -18,3 +18,4 @@ nltk
 python-multipart
 pandas
 soundfile
+opencv-python

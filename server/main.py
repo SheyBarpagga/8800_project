@@ -27,6 +27,7 @@ from io import BytesIO
 import asyncio
 import time
 import soundfile as sf
+import cv2
 # import ffmpeg
 
 nltk.download('punkt')
@@ -131,6 +132,9 @@ if __name__ == "__main__":
     # transcription_model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-base-960h")
     processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-large-960h-lv60-self")
     transcription_model = Wav2Vec2ForCTC.from_pretrained("facebook/wav2vec2-large-960h-lv60-self")
+    path = os.path.join(os.path.dirname(__file__), 'haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier(path)
+
 
     os.makedirs('audio_chunks', exist_ok=True)
 
@@ -248,49 +252,6 @@ if __name__ == "__main__":
         except WebSocketDisconnect:
             print("Audio WebSocket disconnected")
 
-    # @app.websocket("/video-stream")
-    # async def video_stream(websocket: WebSocket):
-    #     await websocket.accept()
-        
-    #     frame_sequence = []  
-        
-    #     try:
-    #         while True:
-    #             data = await websocket.receive_text()
-    #             frames_data = json.loads(data)["frames"]
-                
-    #             for frame in frames_data:
-    #                 # Extract `data` from the dictionary structure
-    #                 base64_data = frame['data']  
-
-    #                 image_bytes = base64.b64decode(base64_data)
-    #                 image = Image.open(BytesIO(image_bytes)).convert("RGB")
-                    
-    #                 # Preprocess image
-    #                 transform = transforms.Compose([
-    #                     transforms.Resize((128, 128)),
-    #                     transforms.ToTensor(),
-    #                     transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
-    #                 ])
-    #                 image_tensor = transform(image)
-    #                 frame_sequence.append(image_tensor)
-
-    #             if len(frame_sequence) == 10:
-    #                 sequence_tensor = torch.stack(frame_sequence).unsqueeze(0)  
-    #                 frame_sequence.clear()  # Clear for the next set
-                    
-    #                 # Predict
-    #                 with torch.no_grad():
-    #                     output = image_model(sequence_tensor)
-    #                     prediction = (output.squeeze() > 0.5).float().item()
-    #                     print(f"Video Prediction: {prediction}")
-                    
-    #                 await websocket.send_json({"scam": prediction})
-        
-    #     except WebSocketDisconnect:
-    #         print("Video WebSocket disconnected")
-
-
     def load_images_from_folder(folder_path):
         image_paths = sorted([os.path.join(folder_path, img) for img in os.listdir(folder_path) if img.endswith(('png', 'jpg', 'jpeg'))])
         return image_paths[:10] 
@@ -310,6 +271,34 @@ if __name__ == "__main__":
         test_path = os.path.join(os.path.dirname(__file__), 'test3')
         return test_images(test_path)
     
+
+    def detect_and_crop_face(img):
+
+        open_cv_image = np.array(img)
+        open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)
+        gray = cv2.cvtColor(open_cv_image, cv2.COLOR_BGR2GRAY)
+        
+        faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5)
+        
+        if len(faces) == 0:
+            return img
+        
+        (x, y, w, h) = faces[0]
+        
+        margin = int(0.2 * h)
+        
+        x_new = max(x - margin, 0)
+        y_new = max(y - margin, 0)
+        x_end = min(x + w + margin, open_cv_image.shape[1])
+        y_end = min(y + h + margin, open_cv_image.shape[0])
+        
+        cropped = open_cv_image[y_new:y_end, x_new:x_end]
+        
+        cropped_img = Image.fromarray(cv2.cvtColor(cropped, cv2.COLOR_BGR2RGB))
+        cropped_img.show()
+        return cropped_img
+
+
     def test_images(test):
         # folder_path = "test"
         image_paths = load_images_from_folder(test)
@@ -318,11 +307,14 @@ if __name__ == "__main__":
         transform = transforms.Compose([
             transforms.Resize((128, 128)),
             transforms.ToTensor(),
-            transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+            # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
         ])
 
         for image_path in image_paths:
             image = Image.open(image_path).convert("RGB")
+
+            image = detect_and_crop_face(image)
+
             image_tensor = transform(image)
             frame_sequence.append(image_tensor)
 
@@ -355,8 +347,9 @@ if __name__ == "__main__":
                     transform = transforms.Compose([
                         transforms.Resize((128, 128)),
                         transforms.ToTensor(),
-                        transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
+                        # transforms.Normalize(mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5])
                     ])
+                    image = detect_and_crop_face(image)
                     image_tensor = transform(image)
                     frame_sequence.append(image_tensor)
 
